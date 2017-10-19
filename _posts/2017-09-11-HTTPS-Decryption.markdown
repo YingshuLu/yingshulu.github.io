@@ -27,7 +27,7 @@ categories: HTTPS Decryption
 
 当client browser 发出SSL握手请求后， 中间人劫持到该信息， 并发出自己的SSL握手请求， 首先拿到server证书， 并对证书进行重签， 如果client browser恰巧信任中间人签发证书，那么就实现了HTTPS Decryption 最核心的证书重签部分。 
 
-###证书重签###
+### 证书重签 ###
 证书重签的关键是client信任签发证书， 在企业级web security产品中， 比较容易实现部署。 1. 要求企业用户提供购买的CA证书作为产品的签字证书； 2. 要求client端导入产品自签的CA证书。
 
 如果是比较Hack的程序实现HTTPS MITM攻击， 应当将client信任自签CA作为攻击的最核心的目标。  
