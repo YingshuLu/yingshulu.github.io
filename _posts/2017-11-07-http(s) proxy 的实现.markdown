@@ -9,12 +9,12 @@ categories: 造轮子
 最近项目调整到了web网关业务，之前对网关的daemon 功能有个大致的了解。
 网关的流量模型本质是proxy, 在转流量的同时做virus-scanning， url filtering, traffic control 以及一些零零散散的统计报表，blocking page 的显示。
 
-总体上没什么难理解的， 无非是non-block + epoll 的实现， 可以参考： https://github.com/YingshuLu/tigerso
+总体上没什么难理解的， 无非是non-block + epoll 的实现， 可以参考 [tigerso](https://github.com/YingshuLu/tigerso)
 
 但是正如之前文章(HTTPS Decryption)讲的， 现在的web整体趋势是往https转，
 所以作为web安全网关应该尽可能去解密HTTPS traffic, 才能充分调用网关的功能。
 
-Https Decryption 介绍了解密（MITM）的原理是重签证书与客户端信任。
+[Https Decryption](https://yingshulu.github.io/https/decryption/2017/09/11/HTTPS-Decryption.html) 介绍了解密（MITM）的原理是重签证书与客户端信任。
 
 真正实现的过程中有两种方法：
 
@@ -29,7 +29,7 @@ Https Decryption 介绍了解密（MITM）的原理是重签证书与客户端�
 第一次 只拿client hello, 不做任何check， 不发ssl response
 第二次 继续回到ssl 握手的流程
 
-分析了项目已有程序，突然手痒，用来三个星期自己造的个 forward http(s) proxy(https://github.com/YingshuLu/tigerso)
+分析了项目已有程序，突然手痒，用来三个星期自己造的个 forward http(s) proxy: [tigerso](https://github.com/YingshuLu/tigerso)
 
 为了简单起见，tigerso 只实现了方案1的https MITM，做了简单的用户控制，websites控制。
 
