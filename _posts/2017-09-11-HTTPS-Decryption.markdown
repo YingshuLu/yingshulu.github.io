@@ -25,7 +25,7 @@ categories: HTTPS Decryption
 知道client browser验证证书的规则，那么作为中间人如何实现HTTPS Decryption？
 答案是中间人充当http proxy 角色， 对于client 来说它是web server, 对于真正的web server 来说它是client browser.
 
-当client browser 发出SSL握手请求后， 中间人劫持到该信息， 并发出自己的SSL握手请求， 首先拿到server证书， 并对证书进行重签， 如果client browser恰巧信任中间人签发证书，那么就实现了HTTPS Decryption 最核心的证书重签部分。 
+当client browser 发出SSL握手请求后， 中间人劫持到该信息， 并发出自己的SSL握手请求， 首先拿到server证书， 并对证书进行重签， 如果client browser恰巧信任中间人签发证书，那么就实现了HTTPS Decryption 最核心的证书重签部分。
 
 ### 证书重签 ###
 证书重签的关键是client信任签发证书， 在企业级web security产品中， 比较容易实现部署。 1. 要求企业用户提供购买的CA证书作为产品的签字证书； 2. 要求client端导入产品自签的CA证书。
@@ -33,47 +33,46 @@ categories: HTTPS Decryption
 如果是比较Hack的程序实现HTTPS MITM攻击， 应当将client信任自签CA作为攻击的最核心的目标。  
 下面使用openssl 实现证书重签：
 
-
-
+```cpp
     bool signCert(X509* ca_cert, EVP_PKEY* ca_pkey, int key_length, X509* org_cert, X509** cert, EVP_PKEY** pkey)   
-    { 
-    
+    {
+
     	if(ca_cert == NULL || ca_pkey == NULL) {
     	printf("Invalid input parameter\n");
    		return false;
     }
-    
+
     RSA* new_cert_rsa;
     *cert = NULL;
     *pkey = NULL;
-    
+
     //取原server证书的issuer
     char issuer[256];
     X509_NAME* xissuer = X509_get_issuer_name(org_cert);
     X509_NAME_oneline(xissuer, issuer, sizeof(issuer));
-    
+
     //取原server证书的subject name
     char commonName[512];
     X509_NAME *subj = X509_get_subject_name(org_cert);
     X509_NAME_get_text_by_NID(subj, NID_commonName, commonName, sizeof(commonName));
-    
+
     ASN1_INTEGER *org_serial = X509_get_serialNumber(org_cert);
     char serialStr[64] = {0};
     for(int i = 0; i < org_serial->length; i++) {
     	snprintf(serialStr + 2 * i, 3, "%02x", org_serial->data[i]);
     }
-    
+
     //生成重签证书的serial number
     char serialNumber[128];
     genSerialNumber(issuer, commonName, serialStr, serialNumber, sizeof(serialNumber));
     printf("generate new serial number: %s\n", serialNumber);
-    
+
     ASN1_INTEGER * serial = s2i_ASN1_INTEGER(NULL, serialNumber);
     if(serial == NULL) {
     	printf("get serial failed\n");
     	return false;
     }
-    
+
     //生成重签证书的RSA key-pair
     new_cert_rsa = genRSA(key_length);
     if(new_cert_rsa == NULL) {
@@ -81,7 +80,7 @@ categories: HTTPS Decryption
     	printf("gen RSA failed");
     	return false;
     }
-    
+
     *pkey = EVP_PKEY_new();
     if(*pkey == NULL) {
     	RSA_free(new_cert_rsa);
@@ -89,7 +88,7 @@ categories: HTTPS Decryption
     	printf("new private key failed\n");
     	return false;
     }
-    
+
     if(EVP_PKEY_set1_RSA(*pkey, new_cert_rsa) < 0) {
     	EVP_PKEY_free(*pkey);
     	RSA_free(new_cert_rsa);
@@ -98,14 +97,14 @@ categories: HTTPS Decryption
     	printf("set private key from RSA failed\n");
     	return false;
     }
-    
+
     RSA_free(new_cert_rsa);
-    
+
     int extcount = 0;
     const char* extstr;
     X509_EXTENSION* extension;
     bool subjectAltName = false;
-    
+
     //取原server证书的SAN
     if((extcount = X509_get_ext_count(org_cert)) > 0) {
     	for(int i = 0; i < extcount; i++) {
@@ -114,10 +113,10 @@ categories: HTTPS Decryption
     		if(!strcmp(extstr, "subjectAltName")) {
     			subjectAltName = true;
     			break;
-    		}	
+    		}
    		}
     }
-    
+
     *cert = X509_new();
     if(*cert == NULL) {
     	ASN1_INTEGER_free(serial);
@@ -126,12 +125,12 @@ categories: HTTPS Decryption
     	printf("new cert failed\n");
     	return false;
     }
-    
+
     //设置伪造证书的SAN
     if(subjectAltName) {
     	X509_add_ext(*cert, extension, -1);
     }
-    
+
     //设置伪造证书的public key, subject name, version, issuer name等
     if(X509_set_pubkey(*cert, *pkey) <= 0 ||
     X509_set_subject_name(*cert, X509_get_subject_name(org_cert)) <=0 ||
@@ -140,19 +139,19 @@ categories: HTTPS Decryption
     X509_set_notBefore(*cert, X509_get_notBefore(ca_cert)) <= 0 ||
     X509_set_notAfter(*cert, X509_get_notAfter(ca_cert)) <= 0 ||
     X509_set_serialNumber(*cert, serial) <= 0) {
-    
+
     	ASN1_INTEGER_free(serial);
     	EVP_PKEY_free(*pkey);
     	*pkey = NULL;
-    
+
     	X509_free(*cert);
     	*cert = NULL;
     	printf("set cert values failed\n");
     	return false;
     }
-    
+
     ASN1_INTEGER_free(serial);
-    
+
     //使用CA 签伪造证书
     if(X509_sign(*cert, ca_pkey, EVP_sha256()) <= 0) {
     	EVP_PKEY_free(*pkey);
@@ -163,10 +162,10 @@ categories: HTTPS Decryption
     	printf("sign cert failed\n");
     	return false;
     }
-    
+
     return true;
     }
 
+```  
 
 完整代码，请参考[yingshulu-github](https://github.com/YingshuLu).
-

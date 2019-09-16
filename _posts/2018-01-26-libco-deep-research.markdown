@@ -1,6 +1,6 @@
 ---
 layout: "post"
-title: "libco-deep-research"
+title: "【协程系列 一】 libco 深入分析"
 date: "2018-01-26 12:38"
 ---
 
@@ -13,17 +13,13 @@ libco通过仅有的几个函数接口 co_create/co_resume/co_yield 再配合 co
 
 ## 基本架构
 
-libco 使用共享栈的协程调度库，
+libco 使用共享栈的协程调度库。
 
-| --------------------------------------------|
-|
-
-|
 
 ## 数据结构
 
 **协程属性上下文**
-```
+```cpp
 struct stCoRoutineAttr_t
 {
 	int stack_size;
@@ -65,7 +61,7 @@ stack_size 同样表示每个运行栈的内存大小， count 表示运行栈�
 地址向低地址增长的， 所以栈基址 stack_bp = stack_buffer + stack_size。
 
 **调度上下文**
-```
+```cpp
 struct stCoRoutineEnv_t
 {
 	stCoRoutine_t *pCallStack[ 128 ];
@@ -84,7 +80,7 @@ socket, 帮助协程调度和定时器的实现。
 pending_co 表示下一个运行的协程上下文， occupy_co 表示当前协程上下文。
 
 **协程上下文**
-```
+```cpp
 struct stCoRoutine_t
 {
 	stCoRoutineEnv_t *env;
@@ -124,7 +120,7 @@ libco 并不是使用context系列函数，而是使用汇编重新实现上下�
 ## 共享栈原理
 每次创建新的协程时， 共享栈的 alloc_id 自增， 并对stack_size取模作为栈数组的下标索引，从而等到
 实际的运行栈内存。
-```
+```cpp
 stStackMem_t* co_get_stackmem(stShareStack_t* share_stack)
 {
 	if (!share_stack)
@@ -140,7 +136,7 @@ stStackMem_t* co_get_stackmem(stShareStack_t* share_stack)
 
 在协程上下文切换时，首先检查待运行协程的运行栈， 如果该运行栈的当前占用协程不是待运行协程， 那么保持当前占用协程的栈空间到save_buffer （动态分配内存）。当协程再次切换回来时， 最拷贝save_buffer 到共享栈， 从而恢复运行栈空间。
 
-```
+```cpp
 env->pending_co = pending_co;
 stCoRoutine_t* occupy_co = pending_co->stack_mem->occupy_co;
 pending_co->stack_mem->occupy_co = pending_co;
@@ -184,7 +180,7 @@ if (update_pending_co->save_buffer && update_pending_co->save_size > 0)
 socket系列函数的弱符号由运行时装载libc.so最终确定函数地址， libco源文件重写了socket系列函数， 这样在编译期socket系列函数被gcc 解释为强符号（初始化了的全局变量）。
 
 当然最重要的是显示调用hook函数：
-```
+```cpp
 void co_enable_hook_sys()
 {
     stCoRoutine_t *co = GetCurrThreadCo();
@@ -218,5 +214,5 @@ gcc main.c -o test -LSOME_PATH -llibco -lpthread
 2. 通过epoll_wait实现的定时器，会导致CPU空转。
 
 ## 文献
-[1] https://github.com/Tencent/libco
+[1] https://github.com/Tencent/libco  
 [2] https://www.cnblogs.com/unnamedfish/p/8460441.html
