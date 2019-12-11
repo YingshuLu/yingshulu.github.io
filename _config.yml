@@ -7,14 +7,14 @@ permalink:        pretty
 relative_permalinks: true
 
 # Setup
-title:            Segment Flow
-tagline:          'A Jekyll theme'
+title:            Hyde
+tagline:          'Segment Flow'
 description:      'A brazen two-column <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that pairs a prominent sidebar with uncomplicated content. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
-url:              http://hyde.getpoole.com
+url:              yingshulu.github.io
 baseurl:          /
 
 author:
-  name:           'yinshulu'
+  name:           'Lu Yingshu'
   url:            https://github.com/yingshulu
 
 paginate:         5
