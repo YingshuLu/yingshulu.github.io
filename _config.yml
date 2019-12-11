@@ -4,9 +4,9 @@ email: yingshulu@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   Segment Flow
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: http://yansu.org # the base hostname & protocol for your site
+url: https://yingshulu.github.io # the base hostname & protocol for your site
 rss_url: /pages/feed.xml
-author: Su Yan
+author: Yingshu Lu
 
 # Sidebar filter
 # Choose 'tag' or 'category' as filter in sidebar.
@@ -22,7 +22,7 @@ linkedin: yingshulu
 
 # avatar and Favicon
 avatar: https://raw.githubusercontent.com/YingshuLu/yingshulu.github.io/master/images/rick-t.png
-favicon: http://imgs.yansu.org/site-favicon.ico
+favicon: https://raw.githubusercontent.com/YingshuLu/yingshulu.github.io/master/images/favicon.ico
 
 # disqus config
 disqus:
