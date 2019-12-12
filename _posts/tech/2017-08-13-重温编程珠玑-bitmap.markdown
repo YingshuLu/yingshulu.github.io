@@ -2,7 +2,7 @@
 layout: post
 title:  "重温编程珠玑之bitmap"
 date:   2017-08-13 12:43:35
-categories: Algorithm
+category: 技术
 ---
 
 不知不觉毕业一年了，这一年在基本都是全身心地学习公司的项目开发流程与业务内容，作为code的核心的算法部分倒有些生疏了，

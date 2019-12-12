@@ -1,6 +1,7 @@
 ---
 layout: "post"
 title: "【kafka】 kafka docker 快速搭建"
+category: 技术
 date: "2018-02-12 12:13"
 ---
 

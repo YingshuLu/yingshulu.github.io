@@ -2,7 +2,7 @@
 layout: post
 title:  "HTTPS Decryption"
 date:   2017-09-11 17:45:55
-categories: HTTPS Decryption
+category: 技术
 ---
 ## HTTPS Decryption 之 证书重签##
 现如今国外网站普遍部署了HTTPS来加密流量, 国内的网站也在加紧部署中, 主流的购物，金融，搜索等知名网站都默认将流量导向HTTPS.
@@ -156,7 +156,7 @@ categories: HTTPS Decryption
     if(X509_sign(*cert, ca_pkey, EVP_sha256()) <= 0) {
     	EVP_PKEY_free(*pkey);
     	*pkey = NULL;
-    
+
     	X509_free(*cert);
     	*cert = NULL;
     	printf("sign cert failed\n");

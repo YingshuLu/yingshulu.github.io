@@ -2,7 +2,7 @@
 layout: post
 title:  "HTTP(s) proxy 的实现"
 date:   2017-11-19 20:46:43
-categories: 造轮子
+category: 技术
 ---
 
 ## 代理服务器程序(proxy)

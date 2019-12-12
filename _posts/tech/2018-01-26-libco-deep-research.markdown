@@ -1,6 +1,7 @@
 ---
 layout: "post"
 title: "【协程系列 一】 libco 深入分析"
+category: 技术
 date: "2018-01-26 12:38"
 ---
 

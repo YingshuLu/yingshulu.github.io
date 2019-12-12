@@ -1,6 +1,7 @@
 ---
 layout: "post"
 title: "【nginx】 性能优化配置"
+category: 技术
 date: "2018-03-20 12:13"
 ---
 
@@ -14,12 +15,12 @@ date: "2018-03-20 12:13"
     keepalive_timeout 65;
     types_hash_max_size 2048;
 
-    listen             443 ssl spdy fastopen=3 reuseport;
+    listen             443 ssl spdy fastopen=3    reuseport;
 
 ```
 
 sendfile: only for http, zero-copy to send file to socket (transfer disk data to socket in kernel mode).
-tcp_nopush: only works for *sendfile enabling*, accumulate data before sending socket
+tcp_nopush: only works for **sendfile enabling**, accumulate data before sending socket
 
 tcp_nodelay: to disable naggle algorithm, immedidately send data to socket, instead of accumulate them to MSS size
 
@@ -62,13 +63,6 @@ proxy_cache_use_stale     updating error timeout invalid_header http_500 http_50
 proxy_http_version        1.1;
 
 proxy_ignore_headers      Set-Cookie;
-```
-
-## Docker
-### 安装Docker & docker-compose
-```
-$ apt-get install docker
-$ apt-get install docker-compose
 ```
 
 ## HTTPS 性能优化

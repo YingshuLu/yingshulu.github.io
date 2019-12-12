@@ -2,7 +2,7 @@
 layout: post
 title:  "原子 CAS 与 锁"
 date:   2017-12-10 22:15:55
-categories: Algorithm
+category: 技术
 ---
 
 ## 原子操作

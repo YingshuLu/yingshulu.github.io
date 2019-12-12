@@ -2,7 +2,7 @@
 layout: post
 title:  "IWSVA RCE Enhancement"
 date:   2017-10-19 15:45:55
-categories: Security
+category: 技术
 ---
 
 # Protection for malicious code injection on web console   
