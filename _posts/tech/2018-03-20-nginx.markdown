@@ -1,0 +1,89 @@
+---
+layout: "post"
+title: "【nginx】 性能优化配置"
+date: "2018-03-20 12:13"
+---
+
+# TCP 性能优化
+
+
+```
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    listen             443 ssl spdy fastopen=3 reuseport;
+
+```
+
+sendfile: only for http, zero-copy to send file to socket (transfer disk data to socket in kernel mode).
+tcp_nopush: only works for *sendfile enabling*, accumulate data before sending socket
+
+tcp_nodelay: to disable naggle algorithm, immedidately send data to socket, instead of accumulate them to MSS size
+
+keepalive_timeout: TCP connection alive time out
+
+reuseport: SO_RESUSEPORT reuse port for multiple workers (precesses)
+
+# HTTP 性能优化
+
+## 压缩静态资源
+```
+http {
+    gzip               on;
+    gzip_vary          on;
+
+    gzip_comp_level    6;
+    gzip_buffers       16 8k;
+
+    gzip_min_length    1000;
+    gzip_proxied       any;
+    gzip_disable       "msie6";
+
+    gzip_http_version  1.0;
+
+    gzip_types         text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript;
+    ... ...
+}
+```  
+gzip for static resources to reduce network data transfering
+
+## 缓存响应内容
+
+```
+proxy_cache               pnc;
+proxy_cache_valid         200 304 2h;
+proxy_cache_lock          on;
+proxy_cache_lock_timeout  5s;
+proxy_cache_use_stale     updating error timeout invalid_header http_500 http_502;
+
+proxy_http_version        1.1;
+
+proxy_ignore_headers      Set-Cookie;
+```
+
+## Docker
+### 安装Docker & docker-compose
+```
+$ apt-get install docker
+$ apt-get install docker-compose
+```
+
+## HTTPS 性能优化
+
+```
+   ssl_session_cache        shared:SSL:10m;
+   ssl_session_timeout      60m;
+
+   ssl_session_tickets      on;
+
+   ssl_stapling             on;
+   ssl_stapling_verify      on;
+   ssl_trusted_certificate  /xxx/full_chain.crt;
+```
+
+## 文献
+[1] https://imququ.com/post/my-nginx-conf-for-wpo.html  
+[2] https://thoughts.t37.net/nginx-optimization-understanding-sendfile-tcp-nodelay-and-tcp-nopush-c55cdd276765
