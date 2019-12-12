@@ -1,11 +1,9 @@
 ---
 layout: "post"
-title: "【协程系列 一】 libco 深入分析"
+title: "【协程系列】 libco 深入分析"
 category: 技术
 date: "2018-01-26 12:38"
 ---
-
-# 【协程系列 一】libco 深入分析
 
 ## 简介
 libco是微信后台大规模使用的c/c++协程库，2013年至今稳定运行在微信后台的数万台机器上。  
@@ -159,7 +157,7 @@ if (update_pending_co->save_buffer && update_pending_co->save_size > 0)
 {
   memcpy(update_pending_co->stack_sp, update_pending_co->save_buffer, update_pending_co->save_size);
 }
-```
+```  
 
 ## epoll的调度
 
